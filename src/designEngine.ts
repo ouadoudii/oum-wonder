@@ -1,46 +1,14 @@
-import type { DesignConcept, DesignInput, Recommendation } from './types.js'
+import type { ConceptDirection, DesignConcept, DesignInput, Recommendation } from './types.js'
 
 const roomMoves: Record<DesignInput['roomType'], { layout: string; signature: string; material: string }> = {
-  Wohnzimmer: {
-    layout: 'Möbel als ruhige Insel gruppieren, Laufwege freihalten und die größte Sichtachse bewusst inszenieren.',
-    signature: 'Eine raumhohe, indirekt beleuchtete Funktionswand verbindet Stauraum, Kunst und Licht zu einem Element.',
-    material: 'Matte Kalkfarbe, warmes Holz und wenige textile Flächen schaffen Tiefe ohne Unruhe.',
-  },
-  Küche: {
-    layout: 'Arbeitsdreieck vereinfachen, Hochschränke bündeln und freie Arbeitsfläche an der hellsten Zone konzentrieren.',
-    signature: 'Eine durchgehende Lichtfuge über Arbeitsfläche und Hochschrankzone lässt die Küche höher und präziser wirken.',
-    material: 'Ruhige Fronten, eine durchgehende Arbeitsplatte und maximal zwei sichtbare Materialfamilien.',
-  },
-  Schlafzimmer: {
-    layout: 'Bett als Mittelpunkt setzen, Schrankvolumen optisch zurücknehmen und Sichtlinien zur Tür beruhigen.',
-    signature: 'Eine gepolsterte oder mineralische Kopfwand mit integriertem Licht ersetzt kleinteilige Deko.',
-    material: 'Textile Oberflächen, gebrochene Naturtöne und weiche Holznuancen für visuelle Ruhe.',
-  },
-  Bad: {
-    layout: 'Nasszone klar bündeln, Boden möglichst durchlaufen lassen und vertikale Flächen als ruhige Ebenen behandeln.',
-    signature: 'Ein großer Spiegel mit seitlichem Licht verdoppelt gefühlt Licht und Raumtiefe.',
-    material: 'Großformatige, matte Flächen mit einer einzigen Akzentstruktur statt vieler kleiner Fugenbilder.',
-  },
-  Arbeitszimmer: {
-    layout: 'Arbeitsplatz ans beste Tageslicht, Stauraum in die Randzone und eine klare Hintergrundfläche für Fokus.',
-    signature: 'Eine flache, raumhohe Arbeitswand kombiniert Regal, Licht und akustisch wirksame Oberfläche.',
-    material: 'Warme, blendfreie Materialien mit ruhigen Texturen und wenig Spiegelung.',
-  },
-  Essbereich: {
-    layout: 'Tisch als Zentrum setzen, Pendelleuchte exakt darüber ausrichten und den Randbereich bewusst leer lassen.',
-    signature: 'Eine einzelne starke Deckenleuchte plus Wandlicht schafft Restaurantwirkung ohne Übermöblierung.',
-    material: 'Holz, strukturierte Wandoberfläche und ein klarer Stoffakzent sorgen für Zusammenhalt.',
-  },
-  Flur: {
-    layout: 'Boden und Wandlinien durchziehen, Stauraum flächenbündig integrieren und Engstellen optisch entlasten.',
-    signature: 'Ein langer Spiegel mit indirektem Seitenlicht verlängert den Raum und verteilt vorhandenes Licht.',
-    material: 'Helle, robuste Wandoberfläche und ein einheitlicher Boden minimieren visuelle Brüche.',
-  },
-  Andere: {
-    layout: 'Die stärkste Raumachse freilegen, Funktionen bündeln und die Blickführung mit Licht statt mit mehr Möbeln steuern.',
-    signature: 'Ein einziges architektonisches Statement bündelt Licht, Stauraum und Oberfläche.',
-    material: 'Wenige, wiederkehrende Materialien geben dem Raum eine klare Sprache.',
-  },
+  Wohnzimmer: { layout: 'Möbel als ruhige Insel gruppieren, Laufwege freihalten und die größte Sichtachse bewusst inszenieren.', signature: 'Eine raumhohe, indirekt beleuchtete Funktionswand verbindet Stauraum, Kunst und Licht zu einem Element.', material: 'Matte Kalkfarbe, warmes Holz und wenige textile Flächen schaffen Tiefe ohne Unruhe.' },
+  Küche: { layout: 'Arbeitsdreieck vereinfachen, Hochschränke bündeln und freie Arbeitsfläche an der hellsten Zone konzentrieren.', signature: 'Eine durchgehende Lichtfuge über Arbeitsfläche und Hochschrankzone lässt die Küche höher und präziser wirken.', material: 'Ruhige Fronten, eine durchgehende Arbeitsplatte und maximal zwei sichtbare Materialfamilien.' },
+  Schlafzimmer: { layout: 'Bett als Mittelpunkt setzen, Schrankvolumen optisch zurücknehmen und Sichtlinien zur Tür beruhigen.', signature: 'Eine gepolsterte oder mineralische Kopfwand mit integriertem Licht ersetzt kleinteilige Deko.', material: 'Textile Oberflächen, gebrochene Naturtöne und weiche Holznuancen für visuelle Ruhe.' },
+  Bad: { layout: 'Nasszone klar bündeln, Boden möglichst durchlaufen lassen und vertikale Flächen als ruhige Ebenen behandeln.', signature: 'Ein großer Spiegel mit seitlichem Licht verdoppelt gefühlt Licht und Raumtiefe.', material: 'Großformatige, matte Flächen mit einer einzigen Akzentstruktur statt vieler kleiner Fugenbilder.' },
+  Arbeitszimmer: { layout: 'Arbeitsplatz ans beste Tageslicht, Stauraum in die Randzone und eine klare Hintergrundfläche für Fokus.', signature: 'Eine flache, raumhohe Arbeitswand kombiniert Regal, Licht und akustisch wirksame Oberfläche.', material: 'Warme, blendfreie Materialien mit ruhigen Texturen und wenig Spiegelung.' },
+  Essbereich: { layout: 'Tisch als Zentrum setzen, Pendelleuchte exakt darüber ausrichten und den Randbereich bewusst leer lassen.', signature: 'Eine einzelne starke Deckenleuchte plus Wandlicht schafft Restaurantwirkung ohne Übermöblierung.', material: 'Holz, strukturierte Wandoberfläche und ein klarer Stoffakzent sorgen für Zusammenhalt.' },
+  Flur: { layout: 'Boden und Wandlinien durchziehen, Stauraum flächenbündig integrieren und Engstellen optisch entlasten.', signature: 'Ein langer Spiegel mit indirektem Seitenlicht verlängert den Raum und verteilt vorhandenes Licht.', material: 'Helle, robuste Wandoberfläche und ein einheitlicher Boden minimieren visuelle Brüche.' },
+  Andere: { layout: 'Die stärkste Raumachse freilegen, Funktionen bündeln und die Blickführung mit Licht statt mit mehr Möbeln steuern.', signature: 'Ein einziges architektonisches Statement bündelt Licht, Stauraum und Oberfläche.', material: 'Wenige, wiederkehrende Materialien geben dem Raum eine klare Sprache.' },
 }
 
 const palettes = {
@@ -50,7 +18,36 @@ const palettes = {
   vivid: ['#F0E7D8', '#C2B29B', '#A15F46', '#302C28'],
 }
 
+const directionProfiles: Record<ConceptDirection, { name: string; thesis: string; layout: string; surfaces: string; signature: string; recommendation: Recommendation }> = {
+  0: {
+    name: 'Architectural Calm',
+    thesis: 'Die ruhigste Richtung: klare Linien, starke Proportionen und wenige präzise Materialien.',
+    layout: 'Zusätzliche Möbel werden nur ergänzt, wenn sie die Hauptachse wirklich stärken.',
+    surfaces: 'Flächen bleiben tonal nah beieinander, damit Licht und Raumform im Vordergrund stehen.',
+    signature: 'Der stärkste Eingriff wirkt wie Architektur statt wie Dekoration.',
+    recommendation: { title: 'Visuelle Ruhe konsequent halten', detail: 'Kleine Einzelakzente reduzieren und stattdessen wenige große, zusammenhängende Flächen gestalten.', impact: 'mittel' },
+  },
+  1: {
+    name: 'Warm Layers',
+    thesis: 'Die wohnlichste Richtung: Wärme entsteht über Licht, Textur und Materialschichten statt über mehr Deko.',
+    layout: 'Sitz-, Arbeits- oder Ruhezone bekommt eine weichere räumliche Fassung durch Textilien, Licht und Holz.',
+    surfaces: 'Warme Holznuancen, strukturierte Textilien und gebrochene Naturtöne bauen Tiefe in mehreren Schichten auf.',
+    signature: 'Eine warme Materialzone mit integriertem Licht wird zum emotionalen Mittelpunkt des Raums.',
+    recommendation: { title: 'Wärme in Schichten aufbauen', detail: 'Nicht alles beige machen: Holz, Textil, warmes Licht und eine mineralische Oberfläche gezielt kombinieren.', impact: 'hoch' },
+  },
+  2: {
+    name: 'Bold Contrast',
+    thesis: 'Die mutigste Richtung: ein bewusst gesetzter Kontrast gibt dem Raum Identität, ohne ihn unruhig zu machen.',
+    layout: 'Eine starke Sichtachse oder Funktionszone darf bewusst betont werden; der Rest des Raums bleibt zurückhaltend.',
+    surfaces: 'Eine dunklere, farbige oder markant strukturierte Fläche trifft auf eine ruhige helle Basis.',
+    signature: 'Ein einziges kontrastreiches Architekturband bündelt Stauraum, Licht oder Kunst zu einem starken Statement.',
+    recommendation: { title: 'Einen mutigen Kontrast setzen', detail: 'Nur eine Zone bekommt maximale Präsenz. Alle übrigen Flächen werden ruhiger, damit der Kontrast hochwertig statt laut wirkt.', impact: 'hoch' },
+  },
+}
+
 function choosePalette(input: DesignInput): string[] {
+  if (input.direction === 1) return palettes.warm
+  if (input.direction === 2) return palettes.vivid
   if (input.signals.brightness < 0.42) return palettes.dim
   if (input.signals.saturation > 0.48) return palettes.vivid
   if (input.signals.warmth > 0.54) return palettes.warm
@@ -58,12 +55,8 @@ function choosePalette(input: DesignInput): string[] {
 }
 
 function lightingAdvice(input: DesignInput): string {
-  if (input.signals.brightness < 0.38) {
-    return 'Drei Lichtschichten statt einer Deckenlampe: indirektes Grundlicht, vertikales Wandlicht und gezieltes Funktionslicht. Wände heller, Leuchten näher an reflektierende Flächen.'
-  }
-  if (input.signals.brightness < 0.58) {
-    return 'Vorhandenes Tageslicht verstärken: helle vertikale Flächen, spiegelnde Akzente gegenüber dem Fenster und warmes, dimmbares Abendlicht auf zwei Höhen.'
-  }
+  if (input.signals.brightness < 0.38) return 'Drei Lichtschichten statt einer Deckenlampe: indirektes Grundlicht, vertikales Wandlicht und gezieltes Funktionslicht. Wände heller, Leuchten näher an reflektierende Flächen.'
+  if (input.signals.brightness < 0.58) return 'Vorhandenes Tageslicht verstärken: helle vertikale Flächen, spiegelnde Akzente gegenüber dem Fenster und warmes, dimmbares Abendlicht auf zwei Höhen.'
   return 'Das gute Licht nicht mit zu vielen Leuchten zerstören: wenige präzise Lichtpunkte, blendfreie Akzente und bewusst dunklere Zonen für Tiefe.'
 }
 
@@ -74,89 +67,25 @@ function addRecommendation(recs: Recommendation[], recommendation: Recommendatio
 function concernRecommendations(input: DesignInput): Recommendation[] {
   const text = input.concern.toLowerCase()
   const recs: Recommendation[] = []
-
-  if (/dunkel|licht|hell|schatt|finster|beleuchtung/.test(text) || input.signals.brightness < 0.45) {
-    addRecommendation(recs, {
-      title: 'Licht zuerst lösen',
-      detail: 'Vertikale Flächen aufhellen, eine indirekte Lichtlinie ergänzen und schwere Fensterzonen visuell öffnen. Das verändert den Raum stärker als neue Deko.',
-      impact: 'hoch',
-    })
-  }
-  if (/klein|eng|tiefe|höhe|niedrig|schmal|gedrückt|proportion/.test(text)) {
-    addRecommendation(recs, {
-      title: 'Proportionen optisch strecken',
-      detail: 'Vorhänge und hohe Elemente bis zur Decke führen, Bodenlinien möglichst unterbrechungsfrei halten und niedrige Möbel in der Hauptsichtachse einsetzen.',
-      impact: 'hoch',
-    })
-  }
-  if (/möbel|ordnung|stauraum|voll|chaos|unruh|zugestellt|abstell/.test(text)) {
-    addRecommendation(recs, {
-      title: 'Volumen bündeln',
-      detail: 'Kleine Einzelmöbel reduzieren und Stauraum in ein großes, ruhiges Volumen zusammenziehen. So entsteht freie Fläche statt nur mehr Platz zum Verstauen.',
-      impact: 'hoch',
-    })
-  }
-  if (/farbe|tapete|wand|langweilig|kalt|steril|gemütlich|atmosphäre/.test(text)) {
-    addRecommendation(recs, {
-      title: 'Eine Wandidee, nicht fünf',
-      detail: 'Eine zusammenhängende Material- oder Farbfläche definieren und sie an angrenzenden Details wiederholen. Das wirkt hochwertiger als viele Akzentwände.',
-      impact: 'mittel',
-    })
-  }
-  if (/fenster|aussicht|tageslicht|vorhang|gardine/.test(text)) {
-    addRecommendation(recs, {
-      title: 'Fensterzone als Raumverstärker nutzen',
-      detail: 'Die Fensterzone frei und leicht halten, hohe Textilien seitlich parken und gegenüberliegende Flächen so wählen, dass sie Tageslicht tiefer in den Raum zurückwerfen.',
-      impact: 'hoch',
-    })
-  }
-  if (/arbeitsfläche|funktion|ablauf|weg|laufweg|praktisch/.test(text)) {
-    addRecommendation(recs, {
-      title: 'Funktion vor Dekoration ordnen',
-      detail: 'Die häufigsten Wege und Handgriffe zuerst optimieren. Möbel und Stauraum folgen den Abläufen, nicht umgekehrt – dadurch wirkt der Raum automatisch großzügiger.',
-      impact: 'hoch',
-    })
-  }
-
+  if (/dunkel|licht|hell|schatt|finster|beleuchtung/.test(text) || input.signals.brightness < 0.45) addRecommendation(recs, { title: 'Licht zuerst lösen', detail: 'Vertikale Flächen aufhellen, eine indirekte Lichtlinie ergänzen und schwere Fensterzonen visuell öffnen. Das verändert den Raum stärker als neue Deko.', impact: 'hoch' })
+  if (/klein|eng|tiefe|höhe|niedrig|schmal|gedrückt|proportion/.test(text)) addRecommendation(recs, { title: 'Proportionen optisch strecken', detail: 'Vorhänge und hohe Elemente bis zur Decke führen, Bodenlinien möglichst unterbrechungsfrei halten und niedrige Möbel in der Hauptsichtachse einsetzen.', impact: 'hoch' })
+  if (/möbel|ordnung|stauraum|voll|chaos|unruh|zugestellt|abstell/.test(text)) addRecommendation(recs, { title: 'Volumen bündeln', detail: 'Kleine Einzelmöbel reduzieren und Stauraum in ein großes, ruhiges Volumen zusammenziehen. So entsteht freie Fläche statt nur mehr Platz zum Verstauen.', impact: 'hoch' })
+  if (/farbe|tapete|wand|langweilig|kalt|steril|gemütlich|atmosphäre/.test(text)) addRecommendation(recs, { title: 'Eine Wandidee, nicht fünf', detail: 'Eine zusammenhängende Material- oder Farbfläche definieren und sie an angrenzenden Details wiederholen. Das wirkt hochwertiger als viele Akzentwände.', impact: 'mittel' })
+  if (/fenster|aussicht|tageslicht|vorhang|gardine/.test(text)) addRecommendation(recs, { title: 'Fensterzone als Raumverstärker nutzen', detail: 'Die Fensterzone frei und leicht halten, hohe Textilien seitlich parken und gegenüberliegende Flächen so wählen, dass sie Tageslicht tiefer in den Raum zurückwerfen.', impact: 'hoch' })
+  if (/arbeitsfläche|funktion|ablauf|weg|laufweg|praktisch/.test(text)) addRecommendation(recs, { title: 'Funktion vor Dekoration ordnen', detail: 'Die häufigsten Wege und Handgriffe zuerst optimieren. Möbel und Stauraum folgen den Abläufen, nicht umgekehrt – dadurch wirkt der Raum automatisch großzügiger.', impact: 'hoch' })
   return recs
 }
 
 function photoOpportunities(input: DesignInput): Recommendation[] {
   const recs: Recommendation[] = []
-
-  if (input.signals.brightness < 0.5) {
-    addRecommendation(recs, {
-      title: 'Helle Flächen dort einsetzen, wo sie Licht zurückgeben',
-      detail: 'Das Foto wirkt lichtarm. Besonders die Flächen gegenüber oder seitlich zum Fenster sollten heller und matter werden, damit vorhandenes Tageslicht tiefer in den Raum wandert.',
-      impact: 'hoch',
-    })
-  }
-  if (input.signals.saturation > 0.5) {
-    addRecommendation(recs, {
-      title: 'Farbkonkurrenz reduzieren',
-      detail: 'Im Foto konkurrieren mehrere Farbreize. Eine ruhigere Grundpalette mit nur einem bewussten Akzent lässt Architektur und Möbel hochwertiger wirken.',
-      impact: 'mittel',
-    })
-  }
-  if (input.signals.warmth < 0.42) {
-    addRecommendation(recs, {
-      title: 'Kühle Raumwirkung ausbalancieren',
-      detail: 'Warme Holz- oder Textilflächen und Licht um etwa 2700–3000 K geben dem Raum Wärme, ohne ihn dunkler oder rustikaler wirken zu lassen.',
-      impact: 'mittel',
-    })
-  }
-  if (input.signals.warmth > 0.64) {
-    addRecommendation(recs, {
-      title: 'Warme Töne präziser dosieren',
-      detail: 'Die warme Bildwirkung bleibt erhalten, bekommt aber mehr Tiefe durch gebrochene helle Flächen und einzelne kühlere Kontraste statt noch mehr Beige oder Holz.',
-      impact: 'mittel',
-    })
-  }
-
+  if (input.signals.brightness < 0.5) addRecommendation(recs, { title: 'Helle Flächen dort einsetzen, wo sie Licht zurückgeben', detail: 'Das Foto wirkt lichtarm. Besonders die Flächen gegenüber oder seitlich zum Fenster sollten heller und matter werden, damit vorhandenes Tageslicht tiefer in den Raum wandert.', impact: 'hoch' })
+  if (input.signals.saturation > 0.5) addRecommendation(recs, { title: 'Farbkonkurrenz reduzieren', detail: 'Im Foto konkurrieren mehrere Farbreize. Eine ruhigere Grundpalette mit nur einem bewussten Akzent lässt Architektur und Möbel hochwertiger wirken.', impact: 'mittel' })
+  if (input.signals.warmth < 0.42) addRecommendation(recs, { title: 'Kühle Raumwirkung ausbalancieren', detail: 'Warme Holz- oder Textilflächen und Licht um etwa 2700–3000 K geben dem Raum Wärme, ohne ihn dunkler oder rustikaler wirken zu lassen.', impact: 'mittel' })
+  if (input.signals.warmth > 0.64) addRecommendation(recs, { title: 'Warme Töne präziser dosieren', detail: 'Die warme Bildwirkung bleibt erhalten, bekommt aber mehr Tiefe durch gebrochene helle Flächen und einzelne kühlere Kontraste statt noch mehr Beige oder Holz.', impact: 'mittel' })
   return recs
 }
 
-function conceptName(input: DesignInput): string {
+function baseConceptName(input: DesignInput): string {
   if (input.mode === 'solve') {
     if (input.signals.brightness < 0.42) return 'Light & Flow Reset'
     if (/klein|eng|schmal|höhe|tiefe/.test(input.concern.toLowerCase())) return 'Bigger Than It Looks'
@@ -170,26 +99,19 @@ function conceptName(input: DesignInput): string {
 
 export function createConcept(input: DesignInput): DesignConcept {
   const move = roomMoves[input.roomType]
+  const direction = input.direction ?? 0
+  const profile = directionProfiles[direction]
   const palette = choosePalette(input)
   const recommendations = concernRecommendations(input)
   const photo = photoOpportunities(input)
   const base: Recommendation[] = [
-    {
-      title: 'Blickachse klären',
-      detail: 'Der erste Blick beim Betreten bekommt ein bewusstes Ziel. Alles, was diese Achse zufällig unterbricht, wird verschoben, gebündelt oder optisch beruhigt.',
-      impact: 'hoch',
-    },
-    {
-      title: 'Wiederholung schafft Einheit',
-      detail: 'Maximal drei Hauptmaterialien und eine Akzentfarbe werden konsequent wiederholt – bei Leuchten, Griffen, Textilien oder Kanten.',
-      impact: 'mittel',
-    },
+    { title: 'Blickachse klären', detail: 'Der erste Blick beim Betreten bekommt ein bewusstes Ziel. Alles, was diese Achse zufällig unterbricht, wird verschoben, gebündelt oder optisch beruhigt.', impact: 'hoch' },
+    { title: 'Wiederholung schafft Einheit', detail: 'Maximal drei Hauptmaterialien und eine Akzentfarbe werden konsequent wiederholt – bei Leuchten, Griffen, Textilien oder Kanten.', impact: 'mittel' },
   ]
 
   const modePhrase = input.mode === 'inspire'
-    ? 'Ein überraschendes Konzept, das zuerst die Architektur des Raums nutzt und erst danach Möbel ergänzt.'
+    ? `Ein überraschendes Konzept mit der Richtung „${profile.name}“. ${profile.thesis}`
     : 'Ein präzises Konzept, das die genannten Störpunkte löst, ohne den Raum mit Einzelmaßnahmen zu überladen.'
-
   const budgetPhrase = input.budget === 'smart'
     ? 'mit maximaler Wirkung und wenig Umbau: Licht, Farbe, Umstellen und wenige gezielte Käufe'
     : input.budget === 'balanced'
@@ -197,19 +119,17 @@ export function createConcept(input: DesignInput): DesignConcept {
       : 'mit architektonischen Eingriffen, maßgefertigten Elementen und einer konsequenten Materialidee'
 
   const prioritized: Recommendation[] = []
-  for (const recommendation of [...recommendations, ...photo, ...base]) {
-    addRecommendation(prioritized, recommendation)
-  }
+  for (const recommendation of [...recommendations, ...(input.mode === 'inspire' ? [profile.recommendation] : []), ...photo, ...base]) addRecommendation(prioritized, recommendation)
 
   return {
-    name: conceptName(input),
+    name: input.mode === 'inspire' && direction > 0 ? profile.name : baseConceptName(input),
     thesis: `${modePhrase} Die Richtung ist ${budgetPhrase}.`,
     palette,
     recommendations: prioritized.slice(0, 4),
     lighting: lightingAdvice(input),
-    layout: move.layout,
-    surfaces: move.material,
-    signatureMove: move.signature,
+    layout: input.mode === 'inspire' ? `${move.layout} ${profile.layout}` : move.layout,
+    surfaces: input.mode === 'inspire' ? `${move.material} ${profile.surfaces}` : move.material,
+    signatureMove: input.mode === 'inspire' && direction > 0 ? profile.signature : move.signature,
     firstSteps: [
       'Hauptblickachse markieren und alles Temporäre aus dieser Zone entfernen.',
       'Lichtwirkung testen: vorhandene Leuchten ausschalten und mit zwei mobilen Lichtquellen verschiedene Höhen simulieren.',
