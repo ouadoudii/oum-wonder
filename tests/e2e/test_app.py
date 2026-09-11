@@ -74,9 +74,9 @@ def run_targeted(page):
     page.get_by_role('button', name='Raum neu denken').click()
     page.get_by_label('Was soll besser werden?').fill('Der Raum ist dunkel, wirkt niedrig und die Möbel stehen chaotisch.')
     page.get_by_role('button', name='Meine Raumvision erstellen').click()
-    page.get_by_text('Licht zuerst lösen').wait_for()
-    page.get_by_text('Proportionen optisch strecken').wait_for()
-    page.get_by_text('Volumen bündeln').wait_for()
+    assert page.get_by_role('heading', name='Licht zuerst lösen').count() >= 1
+    assert page.get_by_role('heading', name='Proportionen optisch strecken').count() >= 1
+    assert page.get_by_role('heading', name='Volumen bündeln').count() >= 1
     assert page.get_by_text('Drei Richtungen für denselben Raum').count() == 0
     check_markers(page)
 
