@@ -7,5 +7,6 @@ const image = (await readFile('public/imageAnalysis.js', 'utf8'))
   .replace(/export async function analyseImage/, 'async function analyseImage')
 const app = (await readFile('public/app.js', 'utf8'))
   .replace(/^import .*?;?\n/gm, '')
+const previewCompare = await readFile('public/previewCompare.js', 'utf8')
 
-await writeFile('public/bundle.js', `${engine}\n${image}\n${app}`)
+await writeFile('public/bundle.js', `${engine}\n${image}\n${app}\n${previewCompare}`)
