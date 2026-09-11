@@ -1,6 +1,7 @@
 export type Mode = 'inspire' | 'solve'
 export type RoomType = 'Wohnzimmer' | 'Küche' | 'Schlafzimmer' | 'Bad' | 'Arbeitszimmer' | 'Essbereich' | 'Flur' | 'Andere'
 export type Budget = 'smart' | 'balanced' | 'bold'
+export type ConceptDirection = 0 | 1 | 2
 
 export interface ImageSignals {
   brightness: number
@@ -14,6 +15,7 @@ export interface DesignInput {
   concern: string
   budget: Budget
   signals: ImageSignals
+  direction?: ConceptDirection
 }
 
 export interface Recommendation {
