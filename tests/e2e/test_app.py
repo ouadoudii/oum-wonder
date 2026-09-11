@@ -17,6 +17,19 @@ def load(page):
     page.set_content(production_html(), wait_until='load')
 
 
+def check_markers(page):
+    markers = page.locator('[data-marker]')
+    assert markers.count() == 3
+    detail = page.get_by_test_id('marker-detail')
+    first_detail = detail.inner_text()
+    assert 'keine vermessene Position im Foto' in first_detail
+    page.locator('[data-marker="1"]').click()
+    second_detail = page.get_by_test_id('marker-detail').inner_text()
+    assert second_detail != first_detail
+    assert page.locator('[data-marker="1"]').get_attribute('aria-pressed') == 'true'
+    assert page.locator('[data-marker="0"]').get_attribute('aria-pressed') == 'false'
+
+
 def run_flow(page, mobile=False):
     load(page)
     page.get_by_text('Ich sehe, was möglich ist.').wait_for()
@@ -32,9 +45,11 @@ def run_flow(page, mobile=False):
     page.get_by_role('button', name='Meine Raumvision erstellen').click()
     page.get_by_text('Kitchen, Reframed').wait_for()
     page.get_by_text('Drei Richtungen für denselben Raum').wait_for()
+    check_markers(page)
     page.get_by_role('button', name='Warm & wohnlich').click()
     page.get_by_text('Warm Layers', exact=True).wait_for()
     page.get_by_text('Wärme in Schichten aufbauen').wait_for()
+    assert page.locator('[data-marker="0"]').get_attribute('aria-pressed') == 'true'
     page.get_by_role('button', name='Mutig & kontrastreich').click()
     page.get_by_text('Bold Contrast', exact=True).wait_for()
     page.get_by_text('Einen mutigen Kontrast setzen').wait_for()
@@ -59,10 +74,11 @@ def run_targeted(page):
     page.get_by_role('button', name='Raum neu denken').click()
     page.get_by_label('Was soll besser werden?').fill('Der Raum ist dunkel, wirkt niedrig und die Möbel stehen chaotisch.')
     page.get_by_role('button', name='Meine Raumvision erstellen').click()
-    page.get_by_text('Licht zuerst lösen').wait_for()
-    page.get_by_text('Proportionen optisch strecken').wait_for()
-    page.get_by_text('Volumen bündeln').wait_for()
+    assert page.get_by_role('heading', name='Licht zuerst lösen').count() >= 1
+    assert page.get_by_role('heading', name='Proportionen optisch strecken').count() >= 1
+    assert page.get_by_role('heading', name='Volumen bündeln').count() >= 1
     assert page.get_by_text('Drei Richtungen für denselben Raum').count() == 0
+    check_markers(page)
 
 with sync_playwright() as p:
     local_chromium = Path('/usr/bin/chromium')
@@ -86,4 +102,4 @@ with sync_playwright() as p:
     mobile_ctx.close()
     browser.close()
 
-print('Browser tests passed: desktop and mobile inspiration direction switching, photo analysis, targeted mode, overflow check.')
+print('Browser tests passed: desktop and mobile inspiration direction switching, interactive concept markers, photo analysis, targeted mode, overflow check.')
