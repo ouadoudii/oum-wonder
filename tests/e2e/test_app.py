@@ -17,6 +17,20 @@ def load(page):
     page.set_content(production_html(), wait_until='load')
 
 
+def check_direction_compare(page):
+    cards = page.locator('[data-direction]')
+    assert cards.count() == 3
+    assert page.get_by_text('Architektonisch ruhig', exact=True).count() == 1
+    assert page.get_by_text('Warm & wohnlich', exact=True).count() == 1
+    assert page.get_by_text('Mutig & kontrastreich', exact=True).count() == 1
+    assert page.get_by_text('Kitchen, Reframed', exact=True).count() >= 2
+    assert page.get_by_text('Warm Layers', exact=True).count() == 1
+    assert page.get_by_text('Bold Contrast', exact=True).count() == 1
+    assert page.locator('[data-direction="0"]').get_attribute('aria-pressed') == 'true'
+    assert page.locator('[data-direction="1"] .palette-row span').count() == 4
+    assert page.locator('[data-direction="2"] .palette-row span').count() == 4
+
+
 def check_markers(page):
     markers = page.locator('[data-marker]')
     assert markers.count() == 3
@@ -43,18 +57,20 @@ def run_flow(page, mobile=False):
     page.get_by_role('button', name='Küche', exact=True).click()
     page.get_by_role('button', name='Neu gedacht auch größere Eingriffe').click()
     page.get_by_role('button', name='Meine Raumvision erstellen').click()
-    page.get_by_text('Kitchen, Reframed').wait_for()
+    page.get_by_text('Kitchen, Reframed').first.wait_for()
     page.get_by_text('Drei Richtungen für denselben Raum').wait_for()
+    check_direction_compare(page)
     check_markers(page)
-    page.get_by_role('button', name='Warm & wohnlich').click()
-    page.get_by_text('Warm Layers', exact=True).wait_for()
+    page.locator('[data-direction="1"]').click()
+    page.get_by_role('heading', name='Warm Layers', exact=True).wait_for()
     page.get_by_text('Wärme in Schichten aufbauen').wait_for()
+    assert page.locator('[data-direction="1"]').get_attribute('aria-pressed') == 'true'
     assert page.locator('[data-marker="0"]').get_attribute('aria-pressed') == 'true'
-    page.get_by_role('button', name='Mutig & kontrastreich').click()
-    page.get_by_text('Bold Contrast', exact=True).wait_for()
+    page.locator('[data-direction="2"]').click()
+    page.get_by_role('heading', name='Bold Contrast', exact=True).wait_for()
     page.get_by_text('Einen mutigen Kontrast setzen').wait_for()
-    page.get_by_role('button', name='Architektonisch ruhig').click()
-    page.get_by_text('Kitchen, Reframed').wait_for()
+    page.locator('[data-direction="0"]').click()
+    page.get_by_role('heading', name='Kitchen, Reframed', exact=True).wait_for()
     page.get_by_text('Was dein Foto zeigt').wait_for()
     assert page.get_by_text('Lichtniveau ·').count() == 1
     assert page.get_by_text('Wärmewirkung ·').count() == 1
@@ -102,4 +118,4 @@ with sync_playwright() as p:
     mobile_ctx.close()
     browser.close()
 
-print('Browser tests passed: desktop and mobile inspiration direction switching, interactive concept markers, photo analysis, targeted mode, overflow check.')
+print('Browser tests passed: desktop and mobile visual direction comparison, direction switching, interactive concept markers, photo analysis, targeted mode, overflow check.')
