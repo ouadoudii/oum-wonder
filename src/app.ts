@@ -23,10 +23,11 @@ interface State {
   direction: ConceptDirection
   concept: DesignConcept | null
   isAnalysing: boolean
+  activeMarker: number
 }
 
 const state: State = {
-  step: 'start', imageUrl: null, fileName: '', signals: neutralSignals, mode: 'inspire', roomType: 'Wohnzimmer', budget: 'balanced', concern: '', direction: 0, concept: null, isAnalysing: false,
+  step: 'start', imageUrl: null, fileName: '', signals: neutralSignals, mode: 'inspire', roomType: 'Wohnzimmer', budget: 'balanced', concern: '', direction: 0, concept: null, isAnalysing: false, activeMarker: 0,
 }
 
 const appRoot = document.querySelector<HTMLElement>('#app')
@@ -68,6 +69,17 @@ function renderDirectionPicker(): string {
   if (state.mode !== 'inspire') return ''
   return `<section class="plan-section" aria-label="Gestaltungsrichtung"><div class="section-heading"><span>Drei Richtungen für denselben Raum</span><small>direkt vergleichen</small></div><div class="chip-scroll" role="group" aria-label="Gestaltungsrichtung">${([0, 1, 2] as ConceptDirection[]).map((direction) => `<button class="chip ${state.direction === direction ? 'active' : ''}" data-direction="${direction}">${directions[direction]}</button>`).join('')}</div></section>`
 }
+function renderConceptPins(concept: DesignConcept): string {
+  const positions = ['pin-one', 'pin-two', 'pin-three']
+  return concept.recommendations.slice(0, 3).map((item, index) => `<button class="idea-pin ${positions[index]}" data-marker="${index}" aria-label="Idee ${index + 1}: ${escapeHtml(item.title)}" aria-pressed="${state.activeMarker === index}">${index + 1}</button>`).join('')
+}
+function renderMarkerDetail(concept: DesignConcept): string {
+  const markerItems = concept.recommendations.slice(0, 3)
+  const item = markerItems[state.activeMarker] ?? markerItems[0]
+  if (!item) return ''
+  const number = Math.min(state.activeMarker, markerItems.length - 1) + 1
+  return `<div class="marker-explainer"><div class="section-heading"><span>Ideen im Bild</span><small>Marker antippen</small></div><article class="recommendation" data-testid="marker-detail" aria-live="polite"><div class="recommendation-number">${number}</div><div><div class="recommendation-title-row"><h3>${item.title}</h3><span>${item.impact}er Effekt</span></div><p>${item.detail}</p><small>Konzeptidee – keine vermessene Position im Foto.</small></div></article></div>`
+}
 function topbar(compact = false): string {
   return `<header class="topbar${compact ? ' compact' : ''}">${compact ? `<button class="icon-button" data-action="back-to-brief" aria-label="Zurück">${icon('back')}</button>` : ''}<div class="brand"><span class="brand-mark">O</span><span>Oum Wonder</span></div>${compact ? `<button class="icon-button" data-action="reset" aria-label="Neu starten">${icon('reset')}</button>` : `<span class="brand-tagline">Räume neu denken</span>`}</header>`
 }
@@ -81,7 +93,7 @@ function renderBrief(): string {
 function renderResult(): string {
   const concept = state.concept
   if (!concept) return renderStart()
-  return `${topbar(true)}<section class="result-hero"><div class="eyebrow">${icon('sparkle')} Deine Raumvision</div><h1>${concept.name}</h1><p>${concept.thesis}</p></section>${renderDirectionPicker()}<section class="vision-stage" aria-label="Raumvorschau"><div class="vision-image-wrap"><img src="${escapeHtml(state.imageUrl ?? '')}" alt="Hochgeladener Raum" class="vision-image"><div class="vision-filter"></div><div class="vision-label original">Heute</div><div class="vision-label concept">Vision</div><div class="idea-pin pin-one">1</div><div class="idea-pin pin-two">2</div><div class="idea-pin pin-three">3</div></div><div class="palette-row" aria-label="Farbpalette">${concept.palette.map((color) => `<span style="background:${color}"></span>`).join('')}</div></section>${renderPhotoAnalysis()}<section class="signature-card"><div class="signature-icon">${icon('sparkle')}</div><div><span class="mini-label">Der Oum-Wonder-Move</span><h2>${concept.signatureMove}</h2></div></section><section class="plan-section"><div class="section-heading"><span>Was verändert den Raum wirklich?</span><small>Priorisiert statt überladen</small></div><div class="recommendation-list">${concept.recommendations.map((item, index) => `<article class="recommendation"><div class="recommendation-number">${index + 1}</div><div><div class="recommendation-title-row"><h3>${item.title}</h3><span>${item.impact}er Effekt</span></div><p>${item.detail}</p></div></article>`).join('')}</div></section><section class="details-grid"><article>${icon('light')}<span class="mini-label">Licht</span><p>${concept.lighting}</p></article><article>${icon('arrow')}<span class="mini-label">Raumfluss</span><p>${concept.layout}</p></article><article>${icon('paint')}<span class="mini-label">Oberflächen</span><p>${concept.surfaces}</p></article></section><section class="first-steps"><div class="section-heading"><span>So würdest du anfangen</span><small>ohne Fehlkäufe</small></div>${concept.firstSteps.map((item) => `<div class="step-row">${icon('check')}<span>${item}</span></div>`).join('')}</section><div class="bottom-actions result-actions"><button class="secondary-button" data-action="back-to-brief">Variante ändern</button><button class="primary-button" data-action="reset">Neuen Raum starten ${icon('arrow')}</button></div>`
+  return `${topbar(true)}<section class="result-hero"><div class="eyebrow">${icon('sparkle')} Deine Raumvision</div><h1>${concept.name}</h1><p>${concept.thesis}</p></section>${renderDirectionPicker()}<section class="vision-stage" aria-label="Raumvorschau"><div class="vision-image-wrap"><img src="${escapeHtml(state.imageUrl ?? '')}" alt="Hochgeladener Raum" class="vision-image"><div class="vision-filter"></div><div class="vision-label original">Heute</div><div class="vision-label concept">Vision</div>${renderConceptPins(concept)}</div><div class="palette-row" aria-label="Farbpalette">${concept.palette.map((color) => `<span style="background:${color}"></span>`).join('')}</div>${renderMarkerDetail(concept)}</section>${renderPhotoAnalysis()}<section class="signature-card"><div class="signature-icon">${icon('sparkle')}</div><div><span class="mini-label">Der Oum-Wonder-Move</span><h2>${concept.signatureMove}</h2></div></section><section class="plan-section"><div class="section-heading"><span>Was verändert den Raum wirklich?</span><small>Priorisiert statt überladen</small></div><div class="recommendation-list">${concept.recommendations.map((item, index) => `<article class="recommendation"><div class="recommendation-number">${index + 1}</div><div><div class="recommendation-title-row"><h3>${item.title}</h3><span>${item.impact}er Effekt</span></div><p>${item.detail}</p></div></article>`).join('')}</div></section><section class="details-grid"><article>${icon('light')}<span class="mini-label">Licht</span><p>${concept.lighting}</p></article><article>${icon('arrow')}<span class="mini-label">Raumfluss</span><p>${concept.layout}</p></article><article>${icon('paint')}<span class="mini-label">Oberflächen</span><p>${concept.surfaces}</p></article></section><section class="first-steps"><div class="section-heading"><span>So würdest du anfangen</span><small>ohne Fehlkäufe</small></div>${concept.firstSteps.map((item) => `<div class="step-row">${icon('check')}<span>${item}</span></div>`).join('')}</section><div class="bottom-actions result-actions"><button class="secondary-button" data-action="back-to-brief">Variante ändern</button><button class="primary-button" data-action="reset">Neuen Raum starten ${icon('arrow')}</button></div>`
 }
 function conceptInput() { return { mode: state.mode, roomType: state.roomType, concern: state.concern, budget: state.budget, signals: state.signals, direction: state.direction } }
 function render(): void { root.innerHTML = state.step === 'start' ? renderStart() : state.step === 'brief' ? renderBrief() : renderResult(); bindEvents() }
@@ -92,7 +104,7 @@ function bindEvents(): void {
     if (action === 'continue' && state.imageUrl) { state.step = 'brief'; render(); window.scrollTo(0, 0) }
     if (action === 'back-start') { state.step = 'start'; render(); window.scrollTo(0, 0) }
     if (action === 'back-to-brief') { state.step = 'brief'; render(); window.scrollTo(0, 0) }
-    if (action === 'generate') { state.direction = 0; state.concept = createConcept(conceptInput()); state.step = 'result'; render(); window.scrollTo(0, 0) }
+    if (action === 'generate') { state.direction = 0; state.activeMarker = 0; state.concept = createConcept(conceptInput()); state.step = 'result'; render(); window.scrollTo(0, 0) }
     if (action === 'reset') reset()
   }))
   root.querySelector<HTMLInputElement>('#room-photo-input')?.addEventListener('change', async (event) => {
@@ -105,7 +117,8 @@ function bindEvents(): void {
   root.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((button) => button.addEventListener('click', () => { state.mode = button.dataset.mode as Mode; render() }))
   root.querySelectorAll<HTMLButtonElement>('[data-room]').forEach((button) => button.addEventListener('click', () => { state.roomType = button.dataset.room as RoomType; render() }))
   root.querySelectorAll<HTMLButtonElement>('[data-budget]').forEach((button) => button.addEventListener('click', () => { state.budget = button.dataset.budget as Budget; render() }))
-  root.querySelectorAll<HTMLButtonElement>('[data-direction]').forEach((button) => button.addEventListener('click', () => { state.direction = Number(button.dataset.direction) as ConceptDirection; state.concept = createConcept(conceptInput()); render(); window.scrollTo(0, 0) }))
+  root.querySelectorAll<HTMLButtonElement>('[data-direction]').forEach((button) => button.addEventListener('click', () => { state.direction = Number(button.dataset.direction) as ConceptDirection; state.activeMarker = 0; state.concept = createConcept(conceptInput()); render(); window.scrollTo(0, 0) }))
+  root.querySelectorAll<HTMLButtonElement>('[data-marker]').forEach((button) => button.addEventListener('click', () => { state.activeMarker = Number(button.dataset.marker); render() }))
   root.querySelector<HTMLTextAreaElement>('#concern')?.addEventListener('input', (event) => {
     const textarea = event.currentTarget as HTMLTextAreaElement; state.concern = textarea.value
     const count = root.querySelector<HTMLElement>('#concern-count'); if (count) count.textContent = `${state.concern.length}/500`
@@ -114,7 +127,7 @@ function bindEvents(): void {
 }
 function reset(): void {
   if (state.imageUrl) URL.revokeObjectURL(state.imageUrl)
-  Object.assign(state, { step: 'start', imageUrl: null, fileName: '', signals: neutralSignals, mode: 'inspire', roomType: 'Wohnzimmer', budget: 'balanced', concern: '', direction: 0, concept: null, isAnalysing: false })
+  Object.assign(state, { step: 'start', imageUrl: null, fileName: '', signals: neutralSignals, mode: 'inspire', roomType: 'Wohnzimmer', budget: 'balanced', concern: '', direction: 0, concept: null, isAnalysing: false, activeMarker: 0 })
   render(); window.scrollTo(0, 0)
 }
 render()
