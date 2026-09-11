@@ -30,7 +30,7 @@ def run_flow(page, mobile=False):
     page.get_by_role('button', name='Küche', exact=True).click()
     page.get_by_role('button', name='Neu gedacht auch größere Eingriffe').click()
     page.get_by_role('button', name='Meine Raumvision erstellen').click()
-    page.get_by_text('The Quiet Wow').wait_for()
+    page.get_by_text('Kitchen, Reframed').wait_for()
     page.get_by_text('Der Oum-Wonder-Move').wait_for()
     page.get_by_text('So würdest du anfangen').wait_for()
     if mobile:
