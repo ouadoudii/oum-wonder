@@ -70,7 +70,7 @@ function renderDirectionPicker(): string {
   if (state.mode !== 'inspire') return ''
   const cards = ([0, 1, 2] as ConceptDirection[]).map((direction) => {
     const concept = createConcept(conceptInput(direction))
-    return `<button class="mode-card ${state.direction === direction ? 'selected' : ''}" data-direction="${direction}" aria-pressed="${state.direction === direction}"><div class="mode-icon">${direction + 1}</div><strong>${directions[direction]}</strong><span><b>${concept.name}</b><br>${concept.signatureMove}</span><div class="palette-row" aria-label="Farbpalette ${directions[direction]}">${concept.palette.map((color) => `<i style="background:${color}"></i>`).join('')}</div><div class="radio-dot" aria-hidden="true"></div></button>`
+    return `<button class="mode-card ${state.direction === direction ? 'selected' : ''}" data-direction="${direction}" aria-pressed="${state.direction === direction}"><div class="mode-icon">${direction + 1}</div><strong>${directions[direction]}</strong><span><b>${concept.name}</b><br>${concept.signatureMove}</span><div class="palette-row" aria-label="Farbpalette ${directions[direction]}">${concept.palette.map((color) => `<span style="background:${color}"></span>`).join('')}</div><div class="radio-dot" aria-hidden="true"></div></button>`
   }).join('')
   return `<section class="plan-section" aria-label="Gestaltungsrichtung"><div class="section-heading"><span>Drei Richtungen für denselben Raum</span><small>auf einen Blick vergleichen</small></div><div class="mode-grid" role="group" aria-label="Gestaltungsrichtung">${cards}</div></section>`
 }
