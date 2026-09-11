@@ -82,3 +82,31 @@ test('keeps targeted solve mode stable even if a direction value is present', ()
   assert.equal(result.name, 'Clear Space Reset')
   assert.doesNotMatch(result.thesis, /Bold Contrast/)
 })
+
+test('personalizes the first implementation step to the room workflow', () => {
+  const kitchen = createConcept({ ...base, roomType: 'Küche', signals: { brightness: 0.7, warmth: 0.5, saturation: 0.3 } })
+  const bedroom = createConcept({ ...base, roomType: 'Schlafzimmer', signals: { brightness: 0.7, warmth: 0.5, saturation: 0.3 } })
+  assert.match(kitchen.firstSteps[0], /Kühlschrank, Spüle und Kochfeld/)
+  assert.match(bedroom.firstSteps[0], /Bettposition und Schrankvolumen/)
+  assert.notEqual(kitchen.firstSteps[0], bedroom.firstSteps[0])
+})
+
+test('turns dark photo signals into a concrete first lighting test', () => {
+  const result = createConcept({ ...base, signals: { brightness: 0.25, warmth: 0.5, saturation: 0.3 } })
+  assert.match(result.firstSteps[0], /Lichttest vor jedem Kauf/)
+  assert.match(result.firstSteps[0], /drei Fotos aus gleicher Position/)
+})
+
+test('makes the final implementation step match the selected ambition budget', () => {
+  const smart = createConcept({ ...base, budget: 'smart' })
+  const balanced = createConcept({ ...base, budget: 'balanced' })
+  const bold = createConcept({ ...base, budget: 'bold' })
+  assert.match(smart.firstSteps[2], /Clever starten/)
+  assert.match(balanced.firstSteps[2], /Ausgewogen planen/)
+  assert.match(bold.firstSteps[2], /Neu gedacht vorbereiten/)
+})
+
+test('uses concern-specific decluttering before purchases in solve mode', () => {
+  const result = createConcept({ ...base, mode: 'solve', concern: 'Die Möbel stehen chaotisch und alles ist zugestellt.', signals: { brightness: 0.7, warmth: 0.5, saturation: 0.3 } })
+  assert.ok(result.firstSteps.some((step) => /Alles Bewegliche aus der wichtigsten Sicht- und Laufachse räumen/.test(step)))
+})

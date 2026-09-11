@@ -45,6 +45,17 @@ const directionProfiles: Record<ConceptDirection, { name: string; thesis: string
   },
 }
 
+const roomStartStep: Record<DesignInput['roomType'], string> = {
+  Wohnzimmer: 'Sitzmöbel probeweise um die wichtigste Blickachse gruppieren und Laufwege mit mindestens einer freien Hauptlinie testen.',
+  Küche: 'Arbeitsablauf einmal real durchspielen: Kühlschrank, Spüle und Kochfeld ablaufen und Engstellen oder fehlende Ablage markieren.',
+  Schlafzimmer: 'Bettposition und Schrankvolumen zuerst mit Klebeband am Boden simulieren, bevor neue Möbel bestellt werden.',
+  Bad: 'Nasszone, Spiegel und Stauraum als drei Funktionsbereiche markieren und prüfen, welche Fugen- und Bodenlinien durchlaufen können.',
+  Arbeitszimmer: 'Schreibtisch am besten Tageslicht testen und Kamera-, Bildschirm- sowie Stauraumzone gemeinsam prüfen.',
+  Essbereich: 'Tischposition inklusive Stuhlauszug am Boden markieren und die Leuchtenmitte exakt darüber bestimmen.',
+  Flur: 'Engste Laufstelle messen und alle losen Stauraumelemente testweise aus der Hauptlinie entfernen.',
+  Andere: 'Die stärkste Sicht- und Bewegungsachse markieren und vorhandene Funktionen darum neu ordnen.',
+}
+
 function choosePalette(input: DesignInput): string[] {
   if (input.direction === 1) return palettes.warm
   if (input.direction === 2) return palettes.vivid
@@ -83,6 +94,31 @@ function photoOpportunities(input: DesignInput): Recommendation[] {
   if (input.signals.warmth < 0.42) addRecommendation(recs, { title: 'Kühle Raumwirkung ausbalancieren', detail: 'Warme Holz- oder Textilflächen und Licht um etwa 2700–3000 K geben dem Raum Wärme, ohne ihn dunkler oder rustikaler wirken zu lassen.', impact: 'mittel' })
   if (input.signals.warmth > 0.64) addRecommendation(recs, { title: 'Warme Töne präziser dosieren', detail: 'Die warme Bildwirkung bleibt erhalten, bekommt aber mehr Tiefe durch gebrochene helle Flächen und einzelne kühlere Kontraste statt noch mehr Beige oder Holz.', impact: 'mittel' })
   return recs
+}
+
+function firstSteps(input: DesignInput): string[] {
+  const concern = input.concern.toLowerCase()
+  const first = input.signals.brightness < 0.45 || /dunkel|licht|hell|fenster|tageslicht/.test(concern)
+    ? 'Lichttest vor jedem Kauf: tagsüber und abends drei Fotos aus gleicher Position machen und mit mobilen Leuchten bzw. hellen Testflächen prüfen, welche Zone wirklich Licht braucht.'
+    : roomStartStep[input.roomType]
+
+  const second = /möbel|ordnung|stauraum|voll|chaos|zugestellt/.test(concern)
+    ? 'Alles Bewegliche aus der wichtigsten Sicht- und Laufachse räumen und erst danach entscheiden, welcher Stauraum tatsächlich zurückkommen muss.'
+    : roomStartStep[input.roomType]
+
+  const budgetStep = input.budget === 'smart'
+    ? 'Clever starten: zuerst Umstellen, Licht, Farbe und vorhandene Möbel testen; erst kaufen, wenn die Wirkung mit diesen günstigen Proben bestätigt ist.'
+    : input.budget === 'balanced'
+      ? 'Ausgewogen planen: Maße und Materialmuster für die zwei wirksamsten Änderungen sammeln und diese zuerst als zusammenhängendes Mini-Paket umsetzen.'
+      : 'Neu gedacht vorbereiten: vor Einbauten oder baulichen Änderungen Maße, Anschlüsse und Materialübergänge dokumentieren und daraus ein verbindliches Umsetzungsbriefing erstellen.'
+
+  const directionStep = input.mode === 'inspire' && input.direction === 1
+    ? 'Für die gewählte warme Richtung drei echte Materialproben nebeneinander bei Tages- und Kunstlicht prüfen, bevor Farbtöne festgelegt werden.'
+    : input.mode === 'inspire' && input.direction === 2
+      ? 'Für die mutige Richtung eine einzige Kontrastzone mit Klebeband oder großem Farbmuster markieren und den restlichen Raum bewusst ruhig lassen.'
+      : 'Palette festlegen: maximal drei Hauptmaterialien und eine Akzentfarbe nebeneinander prüfen, bevor Einzelteile bestellt werden.'
+
+  return [first, second === first ? directionStep : second, budgetStep]
 }
 
 function baseConceptName(input: DesignInput): string {
@@ -130,10 +166,6 @@ export function createConcept(input: DesignInput): DesignConcept {
     layout: input.mode === 'inspire' ? `${move.layout} ${profile.layout}` : move.layout,
     surfaces: input.mode === 'inspire' ? `${move.material} ${profile.surfaces}` : move.material,
     signatureMove: input.mode === 'inspire' && direction > 0 ? profile.signature : move.signature,
-    firstSteps: [
-      'Hauptblickachse markieren und alles Temporäre aus dieser Zone entfernen.',
-      'Lichtwirkung testen: vorhandene Leuchten ausschalten und mit zwei mobilen Lichtquellen verschiedene Höhen simulieren.',
-      'Eine Material- und Farbpalette festlegen, bevor einzelne Möbel oder Deko gekauft werden.',
-    ],
+    firstSteps: firstSteps({ ...input, direction }),
   }
 }
