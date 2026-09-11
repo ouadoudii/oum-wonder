@@ -38,3 +38,28 @@ test('budget changes the ambition framing', () => {
   assert.match(createConcept({ ...base, budget: 'smart' }).thesis, /wenig Umbau/)
   assert.match(createConcept({ ...base, budget: 'bold' }).thesis, /architektonischen Eingriffen/)
 })
+
+test('uses photo signals to identify low-light opportunities even without a written complaint', () => {
+  const result = createConcept({ ...base, signals: { brightness: 0.43, warmth: 0.5, saturation: 0.3 } })
+  assert.ok(result.recommendations.some((item) => item.title === 'Licht zuerst lösen'))
+})
+
+test('balances cool-looking rooms with warmer materials and light', () => {
+  const result = createConcept({ ...base, signals: { brightness: 0.62, warmth: 0.3, saturation: 0.25 } })
+  assert.ok(result.recommendations.some((item) => item.title === 'Kühle Raumwirkung ausbalancieren'))
+})
+
+test('recognizes window and daylight concerns as a distinct opportunity', () => {
+  const result = createConcept({ ...base, mode: 'solve', concern: 'Das Fenster ist eigentlich groß, aber das Tageslicht kommt kaum tief in den Raum.' })
+  assert.ok(result.recommendations.some((item) => item.title === 'Fensterzone als Raumverstärker nutzen'))
+})
+
+test('recognizes functional workflow issues beyond decoration', () => {
+  const result = createConcept({ ...base, mode: 'solve', concern: 'Die Wege in der Küche sind unpraktisch und mir fehlt Arbeitsfläche.' })
+  assert.ok(result.recommendations.some((item) => item.title === 'Funktion vor Dekoration ordnen'))
+})
+
+test('creates a more specific concept name for a dark problem-solving room', () => {
+  const result = createConcept({ ...base, mode: 'solve', signals: { brightness: 0.3, warmth: 0.5, saturation: 0.3 } })
+  assert.equal(result.name, 'Light & Flow Reset')
+})
