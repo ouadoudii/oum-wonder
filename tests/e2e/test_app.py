@@ -31,6 +31,28 @@ def check_direction_compare(page):
     assert page.locator('[data-direction="2"] .palette-row span').count() == 4
 
 
+def check_preview_compare(page):
+    controls = page.locator('[data-preview-compare]')
+    controls.wait_for()
+    today = page.get_by_role('button', name='Heute ansehen')
+    vision = page.get_by_role('button', name='Vision ansehen')
+    assert vision.get_attribute('aria-pressed') == 'true'
+    assert today.get_attribute('aria-pressed') == 'false'
+
+    today.click()
+    assert today.get_attribute('aria-pressed') == 'true'
+    assert vision.get_attribute('aria-pressed') == 'false'
+    assert page.locator('.vision-image').evaluate('(el) => el.style.filter') == 'none'
+    assert page.locator('.vision-filter').evaluate('(el) => el.style.display') == 'none'
+    assert page.locator('[data-marker="0"]').evaluate('(el) => el.style.display') == 'none'
+
+    vision.click()
+    assert vision.get_attribute('aria-pressed') == 'true'
+    assert page.locator('.vision-image').evaluate('(el) => el.style.filter') == ''
+    assert page.locator('.vision-filter').evaluate('(el) => el.style.display') == ''
+    assert page.locator('[data-marker="0"]').evaluate('(el) => el.style.display') == ''
+
+
 def check_markers(page):
     markers = page.locator('[data-marker]')
     assert markers.count() == 3
@@ -60,6 +82,7 @@ def run_flow(page, mobile=False):
     page.get_by_text('Kitchen, Reframed').first.wait_for()
     page.get_by_text('Drei Richtungen für denselben Raum').wait_for()
     check_direction_compare(page)
+    check_preview_compare(page)
     check_markers(page)
     page.locator('[data-direction="1"]').click()
     page.get_by_role('heading', name='Warm Layers', exact=True).wait_for()
@@ -94,6 +117,7 @@ def run_targeted(page):
     assert page.get_by_role('heading', name='Proportionen optisch strecken').count() >= 1
     assert page.get_by_role('heading', name='Volumen bündeln').count() >= 1
     assert page.get_by_text('Drei Richtungen für denselben Raum').count() == 0
+    check_preview_compare(page)
     check_markers(page)
 
 with sync_playwright() as p:
@@ -118,4 +142,4 @@ with sync_playwright() as p:
     mobile_ctx.close()
     browser.close()
 
-print('Browser tests passed: desktop and mobile visual direction comparison, direction switching, interactive concept markers, photo analysis, targeted mode, overflow check.')
+print('Browser tests passed: desktop and mobile before-after preview, visual direction comparison, direction switching, interactive concept markers, photo analysis, targeted mode, overflow check.')
