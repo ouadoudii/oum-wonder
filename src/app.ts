@@ -32,7 +32,7 @@ if (!appRoot) throw new Error('App root missing')
 const root: HTMLElement = appRoot
 
 function escapeHtml(value: string): string {
-  return value.replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char] ?? char)
+  return value.replace(/[&<>'\"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char] ?? char)
 }
 function icon(name: string): string {
   const glyphs: Record<string, string> = { sparkle: '✦', camera: '◉', arrow: '→', back: '←', check: '✓', light: '☼', paint: '◒', reset: '↻' }
@@ -42,6 +42,35 @@ function signalLabel(signals: ImageSignals): string {
   if (signals.brightness < 0.4) return 'eher dunkel'
   if (signals.brightness > 0.66) return 'lichtstark'
   return 'ausgeglichen'
+}
+function signalPercent(value: number): number {
+  return Math.round(Math.min(1, Math.max(0, value)) * 100)
+}
+function brightnessInsight(value: number): string {
+  if (value < 0.4) return 'Wenig Helligkeit – Lichtführung und reflektierende Flächen bekommen Vorrang.'
+  if (value > 0.66) return 'Viel Helligkeit – Kontraste und blendfreie Akzente können stärker inszeniert werden.'
+  return 'Ausgewogene Helligkeit – vorhandenes Tageslicht wird gezielt weitergeführt.'
+}
+function warmthInsight(value: number): string {
+  if (value < 0.42) return 'Kühle Bildwirkung – warme Materialien und Lichttemperaturen schaffen Balance.'
+  if (value > 0.64) return 'Warme Bildwirkung – helle, gebrochene Kontraste sorgen für mehr Tiefe.'
+  return 'Ausgewogene Wärme – die Materialwahl kann neutral und ruhig bleiben.'
+}
+function saturationInsight(value: number): string {
+  if (value > 0.5) return 'Viele kräftige Farbreize – eine ruhigere Grundpalette bringt mehr Einheit.'
+  if (value < 0.2) return 'Sehr zurückhaltende Farben – ein gezielter Akzent kann dem Raum Charakter geben.'
+  return 'Ruhige Farbintensität – einzelne Akzente können präzise gesetzt werden.'
+}
+function renderPhotoAnalysis(): string {
+  return `<section class="plan-section" aria-label="Fotoanalyse">
+    <div class="section-heading"><span>Was dein Foto zeigt</span><small>direkt im Browser analysiert</small></div>
+    <p class="photo-analysis-intro">Diese Bildsignale fließen direkt in die Prioritäten deiner Raumvision ein.</p>
+    <div class="details-grid">
+      <article>${icon('light')}<span class="mini-label">Lichtniveau · ${signalPercent(state.signals.brightness)}%</span><p>${brightnessInsight(state.signals.brightness)}</p></article>
+      <article>${icon('sparkle')}<span class="mini-label">Wärmewirkung · ${signalPercent(state.signals.warmth)}%</span><p>${warmthInsight(state.signals.warmth)}</p></article>
+      <article>${icon('paint')}<span class="mini-label">Farbintensität · ${signalPercent(state.signals.saturation)}%</span><p>${saturationInsight(state.signals.saturation)}</p></article>
+    </div>
+  </section>`
 }
 
 function topbar(compact = false): string {
@@ -97,6 +126,7 @@ function renderResult(): string {
   return `${topbar(true)}
     <section class="result-hero"><div class="eyebrow">${icon('sparkle')} Deine Raumvision</div><h1>${concept.name}</h1><p>${concept.thesis}</p></section>
     <section class="vision-stage" aria-label="Raumvorschau"><div class="vision-image-wrap"><img src="${escapeHtml(state.imageUrl ?? '')}" alt="Hochgeladener Raum" class="vision-image"><div class="vision-filter"></div><div class="vision-label original">Heute</div><div class="vision-label concept">Vision</div><div class="idea-pin pin-one">1</div><div class="idea-pin pin-two">2</div><div class="idea-pin pin-three">3</div></div><div class="palette-row" aria-label="Farbpalette">${concept.palette.map((color) => `<span style="background:${color}"></span>`).join('')}</div></section>
+    ${renderPhotoAnalysis()}
     <section class="signature-card"><div class="signature-icon">${icon('sparkle')}</div><div><span class="mini-label">Der Oum-Wonder-Move</span><h2>${concept.signatureMove}</h2></div></section>
     <section class="plan-section"><div class="section-heading"><span>Was verändert den Raum wirklich?</span><small>Priorisiert statt überladen</small></div><div class="recommendation-list">${concept.recommendations.map((item, index) => `<article class="recommendation"><div class="recommendation-number">${index + 1}</div><div><div class="recommendation-title-row"><h3>${item.title}</h3><span>${item.impact}er Effekt</span></div><p>${item.detail}</p></div></article>`).join('')}</div></section>
     <section class="details-grid"><article>${icon('light')}<span class="mini-label">Licht</span><p>${concept.lighting}</p></article><article>${icon('arrow')}<span class="mini-label">Raumfluss</span><p>${concept.layout}</p></article><article>${icon('paint')}<span class="mini-label">Oberflächen</span><p>${concept.surfaces}</p></article></section>
