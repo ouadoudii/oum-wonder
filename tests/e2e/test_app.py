@@ -31,6 +31,11 @@ def run_flow(page, mobile=False):
     page.get_by_role('button', name='Neu gedacht auch größere Eingriffe').click()
     page.get_by_role('button', name='Meine Raumvision erstellen').click()
     page.get_by_text('Kitchen, Reframed').wait_for()
+    page.get_by_text('Was dein Foto zeigt').wait_for()
+    page.get_by_text('Diese Bildsignale fließen direkt in die Prioritäten deiner Raumvision ein.').wait_for()
+    assert page.get_by_text('Lichtniveau ·').count() == 1
+    assert page.get_by_text('Wärmewirkung ·').count() == 1
+    assert page.get_by_text('Farbintensität ·').count() == 1
     page.get_by_text('Der Oum-Wonder-Move').wait_for()
     page.get_by_text('So würdest du anfangen').wait_for()
     if mobile:
@@ -72,4 +77,4 @@ with sync_playwright() as p:
     mobile_ctx.close()
     browser.close()
 
-print('Browser tests passed: desktop inspiration, desktop targeted improvement, mobile inspiration + overflow check.')
+print('Browser tests passed: desktop inspiration with photo analysis, desktop targeted improvement, mobile inspiration + photo analysis + overflow check.')
