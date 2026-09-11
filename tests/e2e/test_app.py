@@ -31,8 +31,16 @@ def run_flow(page, mobile=False):
     page.get_by_role('button', name='Neu gedacht auch größere Eingriffe').click()
     page.get_by_role('button', name='Meine Raumvision erstellen').click()
     page.get_by_text('Kitchen, Reframed').wait_for()
+    page.get_by_text('Drei Richtungen für denselben Raum').wait_for()
+    page.get_by_role('button', name='Warm & wohnlich').click()
+    page.get_by_text('Warm Layers', exact=True).wait_for()
+    page.get_by_text('Wärme in Schichten aufbauen').wait_for()
+    page.get_by_role('button', name='Mutig & kontrastreich').click()
+    page.get_by_text('Bold Contrast', exact=True).wait_for()
+    page.get_by_text('Einen mutigen Kontrast setzen').wait_for()
+    page.get_by_role('button', name='Architektonisch ruhig').click()
+    page.get_by_text('Kitchen, Reframed').wait_for()
     page.get_by_text('Was dein Foto zeigt').wait_for()
-    page.get_by_text('Diese Bildsignale fließen direkt in die Prioritäten deiner Raumvision ein.').wait_for()
     assert page.get_by_text('Lichtniveau ·').count() == 1
     assert page.get_by_text('Wärmewirkung ·').count() == 1
     assert page.get_by_text('Farbintensität ·').count() == 1
@@ -54,6 +62,7 @@ def run_targeted(page):
     page.get_by_text('Licht zuerst lösen').wait_for()
     page.get_by_text('Proportionen optisch strecken').wait_for()
     page.get_by_text('Volumen bündeln').wait_for()
+    assert page.get_by_text('Drei Richtungen für denselben Raum').count() == 0
 
 with sync_playwright() as p:
     local_chromium = Path('/usr/bin/chromium')
@@ -77,4 +86,4 @@ with sync_playwright() as p:
     mobile_ctx.close()
     browser.close()
 
-print('Browser tests passed: desktop inspiration with photo analysis, desktop targeted improvement, mobile inspiration + photo analysis + overflow check.')
+print('Browser tests passed: desktop and mobile inspiration direction switching, photo analysis, targeted mode, overflow check.')
