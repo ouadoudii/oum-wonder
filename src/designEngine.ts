@@ -67,35 +67,88 @@ function lightingAdvice(input: DesignInput): string {
   return 'Das gute Licht nicht mit zu vielen Leuchten zerstören: wenige präzise Lichtpunkte, blendfreie Akzente und bewusst dunklere Zonen für Tiefe.'
 }
 
+function addRecommendation(recs: Recommendation[], recommendation: Recommendation): void {
+  if (!recs.some((item) => item.title === recommendation.title)) recs.push(recommendation)
+}
+
 function concernRecommendations(input: DesignInput): Recommendation[] {
   const text = input.concern.toLowerCase()
   const recs: Recommendation[] = []
 
-  if (/dunkel|licht|hell/.test(text) || input.signals.brightness < 0.45) {
-    recs.push({
+  if (/dunkel|licht|hell|schatt|finster|beleuchtung/.test(text) || input.signals.brightness < 0.45) {
+    addRecommendation(recs, {
       title: 'Licht zuerst lösen',
       detail: 'Vertikale Flächen aufhellen, eine indirekte Lichtlinie ergänzen und schwere Fensterzonen visuell öffnen. Das verändert den Raum stärker als neue Deko.',
       impact: 'hoch',
     })
   }
-  if (/klein|eng|tiefe|höhe|niedrig/.test(text)) {
-    recs.push({
+  if (/klein|eng|tiefe|höhe|niedrig|schmal|gedrückt|proportion/.test(text)) {
+    addRecommendation(recs, {
       title: 'Proportionen optisch strecken',
       detail: 'Vorhänge und hohe Elemente bis zur Decke führen, Bodenlinien möglichst unterbrechungsfrei halten und niedrige Möbel in der Hauptsichtachse einsetzen.',
       impact: 'hoch',
     })
   }
-  if (/möbel|ordnung|stauraum|voll|chaos/.test(text)) {
-    recs.push({
+  if (/möbel|ordnung|stauraum|voll|chaos|unruh|zugestellt|abstell/.test(text)) {
+    addRecommendation(recs, {
       title: 'Volumen bündeln',
       detail: 'Kleine Einzelmöbel reduzieren und Stauraum in ein großes, ruhiges Volumen zusammenziehen. So entsteht freie Fläche statt nur mehr Platz zum Verstauen.',
       impact: 'hoch',
     })
   }
-  if (/farbe|tapete|wand|langweilig/.test(text)) {
-    recs.push({
+  if (/farbe|tapete|wand|langweilig|kalt|steril|gemütlich|atmosphäre/.test(text)) {
+    addRecommendation(recs, {
       title: 'Eine Wandidee, nicht fünf',
       detail: 'Eine zusammenhängende Material- oder Farbfläche definieren und sie an angrenzenden Details wiederholen. Das wirkt hochwertiger als viele Akzentwände.',
+      impact: 'mittel',
+    })
+  }
+  if (/fenster|aussicht|tageslicht|vorhang|gardine/.test(text)) {
+    addRecommendation(recs, {
+      title: 'Fensterzone als Raumverstärker nutzen',
+      detail: 'Die Fensterzone frei und leicht halten, hohe Textilien seitlich parken und gegenüberliegende Flächen so wählen, dass sie Tageslicht tiefer in den Raum zurückwerfen.',
+      impact: 'hoch',
+    })
+  }
+  if (/arbeitsfläche|funktion|ablauf|weg|laufweg|praktisch/.test(text)) {
+    addRecommendation(recs, {
+      title: 'Funktion vor Dekoration ordnen',
+      detail: 'Die häufigsten Wege und Handgriffe zuerst optimieren. Möbel und Stauraum folgen den Abläufen, nicht umgekehrt – dadurch wirkt der Raum automatisch großzügiger.',
+      impact: 'hoch',
+    })
+  }
+
+  return recs
+}
+
+function photoOpportunities(input: DesignInput): Recommendation[] {
+  const recs: Recommendation[] = []
+
+  if (input.signals.brightness < 0.5) {
+    addRecommendation(recs, {
+      title: 'Helle Flächen dort einsetzen, wo sie Licht zurückgeben',
+      detail: 'Das Foto wirkt lichtarm. Besonders die Flächen gegenüber oder seitlich zum Fenster sollten heller und matter werden, damit vorhandenes Tageslicht tiefer in den Raum wandert.',
+      impact: 'hoch',
+    })
+  }
+  if (input.signals.saturation > 0.5) {
+    addRecommendation(recs, {
+      title: 'Farbkonkurrenz reduzieren',
+      detail: 'Im Foto konkurrieren mehrere Farbreize. Eine ruhigere Grundpalette mit nur einem bewussten Akzent lässt Architektur und Möbel hochwertiger wirken.',
+      impact: 'mittel',
+    })
+  }
+  if (input.signals.warmth < 0.42) {
+    addRecommendation(recs, {
+      title: 'Kühle Raumwirkung ausbalancieren',
+      detail: 'Warme Holz- oder Textilflächen und Licht um etwa 2700–3000 K geben dem Raum Wärme, ohne ihn dunkler oder rustikaler wirken zu lassen.',
+      impact: 'mittel',
+    })
+  }
+  if (input.signals.warmth > 0.64) {
+    addRecommendation(recs, {
+      title: 'Warme Töne präziser dosieren',
+      detail: 'Die warme Bildwirkung bleibt erhalten, bekommt aber mehr Tiefe durch gebrochene helle Flächen und einzelne kühlere Kontraste statt noch mehr Beige oder Holz.',
       impact: 'mittel',
     })
   }
@@ -103,10 +156,23 @@ function concernRecommendations(input: DesignInput): Recommendation[] {
   return recs
 }
 
+function conceptName(input: DesignInput): string {
+  if (input.mode === 'solve') {
+    if (input.signals.brightness < 0.42) return 'Light & Flow Reset'
+    if (/klein|eng|schmal|höhe|tiefe/.test(input.concern.toLowerCase())) return 'Bigger Than It Looks'
+    return 'Clear Space Reset'
+  }
+  if (input.roomType === 'Küche') return 'Kitchen, Reframed'
+  if (input.roomType === 'Wohnzimmer') return 'The Quiet Wow'
+  if (input.roomType === 'Schlafzimmer') return 'Soft Architecture'
+  return 'Hidden Potential'
+}
+
 export function createConcept(input: DesignInput): DesignConcept {
   const move = roomMoves[input.roomType]
   const palette = choosePalette(input)
   const recommendations = concernRecommendations(input)
+  const photo = photoOpportunities(input)
   const base: Recommendation[] = [
     {
       title: 'Blickachse klären',
@@ -130,11 +196,16 @@ export function createConcept(input: DesignInput): DesignConcept {
       ? 'mit einer Mischung aus Oberflächen, Licht, Möbelanpassungen und einzelnen Einbauten'
       : 'mit architektonischen Eingriffen, maßgefertigten Elementen und einer konsequenten Materialidee'
 
+  const prioritized: Recommendation[] = []
+  for (const recommendation of [...recommendations, ...photo, ...base]) {
+    addRecommendation(prioritized, recommendation)
+  }
+
   return {
-    name: input.mode === 'inspire' ? 'The Quiet Wow' : 'Clear Space Reset',
+    name: conceptName(input),
     thesis: `${modePhrase} Die Richtung ist ${budgetPhrase}.`,
     palette,
-    recommendations: [...recommendations, ...base].slice(0, 4),
+    recommendations: prioritized.slice(0, 4),
     lighting: lightingAdvice(input),
     layout: move.layout,
     surfaces: move.material,
