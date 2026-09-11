@@ -63,3 +63,22 @@ test('creates a more specific concept name for a dark problem-solving room', () 
   const result = createConcept({ ...base, mode: 'solve', signals: { brightness: 0.3, warmth: 0.5, saturation: 0.3 } })
   assert.equal(result.name, 'Light & Flow Reset')
 })
+
+test('creates three genuinely distinct inspiration directions', () => {
+  const calm = createConcept({ ...base, direction: 0 })
+  const warm = createConcept({ ...base, direction: 1 })
+  const bold = createConcept({ ...base, direction: 2 })
+  assert.equal(calm.name, 'Kitchen, Reframed')
+  assert.equal(warm.name, 'Warm Layers')
+  assert.equal(bold.name, 'Bold Contrast')
+  assert.notEqual(calm.signatureMove, warm.signatureMove)
+  assert.notEqual(warm.signatureMove, bold.signatureMove)
+  assert.ok(warm.recommendations.some((item) => item.title === 'Wärme in Schichten aufbauen'))
+  assert.ok(bold.recommendations.some((item) => item.title === 'Einen mutigen Kontrast setzen'))
+})
+
+test('keeps targeted solve mode stable even if a direction value is present', () => {
+  const result = createConcept({ ...base, mode: 'solve', concern: 'Mehr Ordnung', direction: 2 })
+  assert.equal(result.name, 'Clear Space Reset')
+  assert.doesNotMatch(result.thesis, /Bold Contrast/)
+})
