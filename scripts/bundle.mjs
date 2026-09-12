@@ -9,6 +9,7 @@ const app = (await readFile('public/app.js', 'utf8'))
   .replace(/^import .*?;?\n/gm, '')
 const previewCompare = await readFile('public/previewCompare.js', 'utf8')
 const exportPlan = (await readFile('public/exportPlan.js', 'utf8'))
+  .replace(/export function formatPlanText/, 'function formatPlanText')
   .replace(/export function buildPlanText/, 'function buildPlanText')
 
 await writeFile('public/bundle.js', `${engine}\n${image}\n${app}\n${previewCompare}\n${exportPlan}`)
