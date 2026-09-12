@@ -16,5 +16,7 @@ const spatialLight = (await readFile('public/spatialLight.js', 'utf8'))
   .replace(/export function describeLightDistribution/, 'function describeLightDistribution')
 const roomMeasurements = (await readFile('public/roomMeasurements.js', 'utf8'))
   .replace(/export function analyseRoomMeasurements/, 'function analyseRoomMeasurements')
+const roomConstraints = (await readFile('public/roomConstraints.js', 'utf8'))
+  .replace(/export function buildConstraintInsight/, 'function buildConstraintInsight')
 
-await writeFile('public/bundle.js', `${engine}\n${image}\n${app}\n${previewCompare}\n${exportPlan}\n${spatialLight}\n${roomMeasurements}`)
+await writeFile('public/bundle.js', `${engine}\n${image}\n${app}\n${previewCompare}\n${exportPlan}\n${spatialLight}\n${roomMeasurements}\n${roomConstraints}`)
