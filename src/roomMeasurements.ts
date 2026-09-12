@@ -63,6 +63,16 @@ function numericValue(input: HTMLInputElement): number | undefined {
   return valid(value) ? value : undefined
 }
 
+function setMeasurement(key: keyof RoomMeasurements, value: number | undefined): void {
+  if (value === undefined) {
+    delete measurements[key]
+    return
+  }
+  if (key === 'width') measurements.width = value
+  if (key === 'depth') measurements.depth = value
+  if (key === 'height') measurements.height = value
+}
+
 function measurementField(key: keyof RoomMeasurements, label: string, value: number | undefined): string {
   return `<label class="measurement-field"><span>${label}</span><div><input inputmode="decimal" type="number" min="0.5" max="20" step="0.01" data-room-measurement="${key}" value="${value ?? ''}" aria-label="${label} in Metern"><small>m</small></div></label>`
 }
@@ -114,7 +124,7 @@ if (typeof document !== 'undefined') {
     if (!(input instanceof HTMLInputElement)) return
     const key = input.dataset.roomMeasurement as keyof RoomMeasurements | undefined
     if (!key) return
-    measurements[key] = numericValue(input)
+    setMeasurement(key, numericValue(input))
   })
 
   const observer = new MutationObserver(enhanceMeasurements)
