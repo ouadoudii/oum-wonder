@@ -30,8 +30,16 @@ export function analyseLightDistribution(data: Uint8ClampedArray, width: number,
       const b = (data[index + 2] ?? 0) / 255
       const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
       const zone = Math.min(2, Math.floor((x / width) * 3))
-      sums[zone] += luminance
-      counts[zone] += 1
+      if (zone === 0) {
+        sums[0] += luminance
+        counts[0] += 1
+      } else if (zone === 1) {
+        sums[1] += luminance
+        counts[1] += 1
+      } else {
+        sums[2] += luminance
+        counts[2] += 1
+      }
     }
   }
 
