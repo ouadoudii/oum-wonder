@@ -14,5 +14,7 @@ const exportPlan = (await readFile('public/exportPlan.js', 'utf8'))
 const spatialLight = (await readFile('public/spatialLight.js', 'utf8'))
   .replace(/export function analyseLightDistribution/, 'function analyseLightDistribution')
   .replace(/export function describeLightDistribution/, 'function describeLightDistribution')
+const roomMeasurements = (await readFile('public/roomMeasurements.js', 'utf8'))
+  .replace(/export function analyseRoomMeasurements/, 'function analyseRoomMeasurements')
 
-await writeFile('public/bundle.js', `${engine}\n${image}\n${app}\n${previewCompare}\n${exportPlan}\n${spatialLight}`)
+await writeFile('public/bundle.js', `${engine}\n${image}\n${app}\n${previewCompare}\n${exportPlan}\n${spatialLight}\n${roomMeasurements}`)
