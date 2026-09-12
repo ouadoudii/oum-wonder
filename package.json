@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "node scripts/lint.mjs",
     "test": "npm run build && node --test tests/unit/*.test.mjs",
-    "test:e2e": "npm run build && python3 tests/e2e/test_app.py",
+    "test:e2e": "npm run build && python3 tests/e2e/test_app.py && python3 tests/e2e/test_export.py",
     "audit": "node scripts/audit-deps.mjs",
     "quality": "npm run typecheck && npm run lint && npm run test && npm run audit && npm run build && npm run test:e2e"
   },
