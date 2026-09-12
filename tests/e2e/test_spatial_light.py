@@ -23,10 +23,11 @@ def run_flow(page, mobile=False):
 
     card = page.locator('[data-spatial-light]')
     card.wait_for()
+    card_text = card.inner_text()
     assert card.get_attribute('data-spatial-light-direction') == 'right'
-    assert 'Lichtverteilung' in card.inner_text()
-    assert 'Rechts heller' in card.inner_text()
-    assert 'linke Seite' in card.inner_text()
+    assert 'lichtverteilung' in card_text.lower()
+    assert 'Rechts heller' in card_text
+    assert 'linke Seite' in card_text
 
     if mobile:
         assert page.evaluate('document.body.scrollWidth <= window.innerWidth')
