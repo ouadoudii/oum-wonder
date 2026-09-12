@@ -18,5 +18,7 @@ const roomMeasurements = (await readFile('public/roomMeasurements.js', 'utf8'))
   .replace(/export function analyseRoomMeasurements/, 'function analyseRoomMeasurements')
 const roomConstraints = (await readFile('public/roomConstraints.js', 'utf8'))
   .replace(/export function buildConstraintInsight/, 'function buildConstraintInsight')
+const windowOrientation = (await readFile('public/windowOrientation.js', 'utf8'))
+  .replace(/export function buildOrientationInsight/, 'function buildOrientationInsight')
 
-await writeFile('public/bundle.js', `${engine}\n${image}\n${app}\n${previewCompare}\n${exportPlan}\n${spatialLight}\n${roomMeasurements}\n${roomConstraints}`)
+await writeFile('public/bundle.js', `${engine}\n${image}\n${app}\n${previewCompare}\n${exportPlan}\n${spatialLight}\n${roomMeasurements}\n${roomConstraints}\n${windowOrientation}`)
