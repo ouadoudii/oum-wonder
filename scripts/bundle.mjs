@@ -20,5 +20,7 @@ const roomConstraints = (await readFile('public/roomConstraints.js', 'utf8'))
   .replace(/export function buildConstraintInsight/, 'function buildConstraintInsight')
 const windowOrientation = (await readFile('public/windowOrientation.js', 'utf8'))
   .replace(/export function buildOrientationInsight/, 'function buildOrientationInsight')
+const everydayNeeds = (await readFile('public/everydayNeeds.js', 'utf8'))
+  .replace(/export function buildEverydayNeedsInsight/, 'function buildEverydayNeedsInsight')
 
-await writeFile('public/bundle.js', `${engine}\n${image}\n${app}\n${previewCompare}\n${exportPlan}\n${spatialLight}\n${roomMeasurements}\n${roomConstraints}\n${windowOrientation}`)
+await writeFile('public/bundle.js', `${engine}\n${image}\n${app}\n${previewCompare}\n${exportPlan}\n${spatialLight}\n${roomMeasurements}\n${roomConstraints}\n${windowOrientation}\n${everydayNeeds}`)
