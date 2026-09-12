@@ -20,8 +20,8 @@ export function buildOrientationInsight(orientation: WindowOrientation | null): 
   }
 }
 
-let selected: WindowOrientation | null = null
-const options: WindowOrientation[] = ['Nord', 'Ost', 'Süd', 'West']
+let orientationSelected: WindowOrientation | null = null
+const orientationOptions: WindowOrientation[] = ['Nord', 'Ost', 'Süd', 'West']
 
 function injectOrientationStyles(): void {
   if (document.querySelector('[data-orientation-styles]')) return
@@ -31,8 +31,8 @@ function injectOrientationStyles(): void {
   document.head.appendChild(style)
 }
 
-function chip(option: WindowOrientation): string {
-  return `<button type="button" class="orientation-chip" data-window-orientation="${option}" aria-pressed="${selected === option}">${option}</button>`
+function orientationChip(option: WindowOrientation): string {
+  return `<button type="button" class="orientation-chip" data-window-orientation="${option}" aria-pressed="${orientationSelected === option}">${option}</button>`
 }
 
 function injectOrientationInputs(): void {
@@ -42,13 +42,13 @@ function injectOrientationInputs(): void {
   const section = document.createElement('section')
   section.dataset.windowOrientationSection = 'true'
   section.className = 'orientation-section'
-  section.innerHTML = `<div class="section-heading"><span>Fensterausrichtung <small>(optional)</small></span><small>macht Lichttipps genauer</small></div><div class="orientation-options" role="group" aria-label="Fensterausrichtung">${options.map(chip).join('')}</div><p class="orientation-help">Falls du weißt, wohin die wichtigsten Fenster zeigen, kann Oum Wonder Tageslicht und Blendung realistischer einplanen.</p>`
+  section.innerHTML = `<div class="section-heading"><span>Fensterausrichtung <small>(optional)</small></span><small>macht Lichttipps genauer</small></div><div class="orientation-options" role="group" aria-label="Fensterausrichtung">${orientationOptions.map(orientationChip).join('')}</div><p class="orientation-help">Falls du weißt, wohin die wichtigsten Fenster zeigen, kann Oum Wonder Tageslicht und Blendung realistischer einplanen.</p>`
   form.appendChild(section)
 }
 
 function injectOrientationInsight(): void {
   if (!document.querySelector('.result-hero')) return
-  const insight = buildOrientationInsight(selected)
+  const insight = buildOrientationInsight(orientationSelected)
   if (!insight) return
 
   const detailGrids = document.querySelectorAll<HTMLElement>('.details-grid')
@@ -74,11 +74,11 @@ if (typeof document !== 'undefined') {
     const button = target.closest<HTMLButtonElement>('[data-window-orientation]')
     if (!button) return
     const option = button.dataset.windowOrientation as WindowOrientation | undefined
-    if (!option || !options.includes(option)) return
+    if (!option || !orientationOptions.includes(option)) return
 
-    selected = selected === option ? null : option
+    orientationSelected = orientationSelected === option ? null : option
     document.querySelectorAll<HTMLButtonElement>('[data-window-orientation]').forEach((item) => {
-      item.setAttribute('aria-pressed', String(item.dataset.windowOrientation === selected))
+      item.setAttribute('aria-pressed', String(item.dataset.windowOrientation === orientationSelected))
     })
   })
 
