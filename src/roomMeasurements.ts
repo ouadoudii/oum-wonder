@@ -67,6 +67,14 @@ function measurementField(key: keyof RoomMeasurements, label: string, value: num
   return `<label class="measurement-field"><span>${label}</span><div><input inputmode="decimal" type="number" min="0.5" max="20" step="0.01" data-room-measurement="${key}" value="${value ?? ''}" aria-label="${label} in Metern"><small>m</small></div></label>`
 }
 
+function injectMeasurementStyles(): void {
+  if (document.querySelector('[data-measurement-styles]')) return
+  const style = document.createElement('style')
+  style.dataset.measurementStyles = 'true'
+  style.textContent = `.measurement-section{display:flex;flex-direction:column;gap:12px}.measurement-section .section-heading{margin-bottom:0}.measurement-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.measurement-field{display:flex;flex-direction:column;gap:7px;font-size:.8rem;font-weight:700}.measurement-field>div{display:flex;align-items:center;border:1px solid rgba(45,42,37,.16);border-radius:14px;background:#fff;overflow:hidden}.measurement-field input{width:100%;min-width:0;border:0;background:transparent;padding:13px 10px;font:inherit;color:inherit;outline:none}.measurement-field input:focus{box-shadow:inset 0 0 0 2px rgba(96,78,57,.22)}.measurement-field small{padding-right:10px;color:#756f66;font-weight:600}.measurement-help{margin:0;color:#756f66;font-size:.78rem;line-height:1.45}@media(max-width:430px){.measurement-grid{grid-template-columns:1fr}.measurement-field{font-size:.85rem}.measurement-field input{padding:14px 12px}}`
+  document.head.appendChild(style)
+}
+
 function injectMeasurementInputs(): void {
   const form = document.querySelector<HTMLElement>('.brief-form')
   if (!form || form.querySelector('[data-room-measurements]')) return
@@ -95,6 +103,7 @@ function injectMeasurementInsight(): void {
 }
 
 function enhanceMeasurements(): void {
+  injectMeasurementStyles()
   injectMeasurementInputs()
   injectMeasurementInsight()
 }
