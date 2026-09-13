@@ -26,5 +26,6 @@ const budgetCeiling = (await readFile('public/budgetCeiling.js', 'utf8'))
   .replace(/export function buildBudgetCeilingInsight/, 'function buildBudgetCeilingInsight')
 const rentalFriendly = (await readFile('public/rentalFriendly.js', 'utf8'))
   .replace(/export function buildRentalFriendlyInsight/, 'function buildRentalFriendlyInsight')
+  .replace(/export function buildRentalAlternatives/, 'function buildRentalAlternatives')
 
 await writeFile('public/bundle.js', `${engine}\n${image}\n${app}\n${previewCompare}\n${exportPlan}\n${spatialLight}\n${roomMeasurements}\n${roomConstraints}\n${windowOrientation}\n${everydayNeeds}\n${budgetCeiling}\n${rentalFriendly}`)

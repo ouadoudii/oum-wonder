@@ -31,9 +31,22 @@ def run_flow(page, mobile=False):
     assert 'Mietfreundlich und reversibel planen' in text
     assert 'ausdrücklich erlaubt' in text
 
+    alternatives = page.locator('[data-rental-alternatives]')
+    alternatives.wait_for()
+    alternative_text = alternatives.inner_text()
+    assert 'Mietfreundlich übersetzt' in alternative_text
+    assert 'Einbauten → modulare Möbel' in alternative_text
+    assert 'Feste Lichtlösung → steckbare Lichtschicht' in alternative_text
+    assert 'Neue Oberfläche → reversible Schicht' in alternative_text
+
+    cautions = page.locator('[data-rental-caution]')
+    assert cautions.count() >= 1
+    assert 'Nur mit Freigabe' in cautions.first.inner_text()
+
     if mobile:
         assert page.evaluate('window.innerWidth') <= 430
         assert page.locator('body').evaluate('(el) => el.scrollWidth <= window.innerWidth')
+        assert page.locator('.rental-alternative-list').evaluate("(el) => getComputedStyle(el).gridTemplateColumns.split(' ').length === 1")
 
 
 with sync_playwright() as p:
