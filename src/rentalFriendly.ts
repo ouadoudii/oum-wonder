@@ -73,14 +73,14 @@ function injectRentalInsight(): void {
 function markStructuralRecommendations(): void {
   if (!rentalFriendly || !document.querySelector('.result-hero')) return
   const structuralPattern = /raumhoch|integriert|einbau|baulich|lichtfuge|anschluss|feste\s|festen\s/i
-  document.querySelectorAll<HTMLElement>('.recommendation').forEach((recommendation) => {
-    if (recommendation.querySelector('[data-rental-caution]')) return
-    if (!structuralPattern.test(recommendation.textContent ?? '')) return
+  document.querySelectorAll<HTMLElement>('.signature-card, .recommendation').forEach((item) => {
+    if (item.querySelector('[data-rental-caution]')) return
+    if (!structuralPattern.test(item.textContent ?? '')) return
     const caution = document.createElement('small')
     caution.dataset.rentalCaution = 'true'
     caution.className = 'rental-caution'
     caution.textContent = 'Nur mit Freigabe – sonst reversible Alternative nutzen'
-    recommendation.appendChild(caution)
+    item.appendChild(caution)
   })
 }
 
