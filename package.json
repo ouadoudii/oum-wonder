@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "node scripts/lint.mjs",
     "test": "npm run build && node --test tests/unit/*.test.mjs",
-    "test:e2e": "npm run build && python3 tests/e2e/test_app.py && python3 tests/e2e/test_export.py && python3 tests/e2e/test_spatial_light.py && python3 tests/e2e/test_room_measurements.py && python3 tests/e2e/test_room_constraints.py && python3 tests/e2e/test_window_orientation.py && python3 tests/e2e/test_everyday_needs.py && python3 tests/e2e/test_budget_ceiling.py",
+    "test:e2e": "npm run build && python3 tests/e2e/test_app.py && python3 tests/e2e/test_export.py && python3 tests/e2e/test_spatial_light.py && python3 tests/e2e/test_room_measurements.py && python3 tests/e2e/test_room_constraints.py && python3 tests/e2e/test_window_orientation.py && python3 tests/e2e/test_everyday_needs.py && python3 tests/e2e/test_budget_ceiling.py && python3 tests/e2e/test_rental_friendly.py",
     "audit": "node scripts/audit-deps.mjs",
     "quality": "npm run typecheck && npm run lint && npm run test && npm run audit && npm run build && npm run test:e2e"
   },
