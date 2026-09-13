@@ -15,7 +15,7 @@ const buildRentalAlternatives = context.buildRentalAlternatives
 
 test('returns no insight when rental mode is not selected', () => {
   assert.equal(buildRentalFriendlyInsight(false), null)
-  assert.deepEqual(buildRentalAlternatives(false), [])
+  assert.equal(buildRentalAlternatives(false).length, 0)
 })
 
 test('prioritizes reversible changes for a rental', () => {
